@@ -9,7 +9,7 @@ ui <- fluidPage(
         title = "beautier",
         tabPanel(
           title = "Partitions",
-          textInput("filename", h3("Filename"), value = beautier::get_beautier_path("anthus_aco_sub.fas"))
+          textInput("filename", "Filename", value = beautier::get_beautier_path("anthus_aco_sub.fas"), width = "100%")
         ),
         tabPanel("Tip Dates"),
         tabPanel("Site Model",
@@ -25,10 +25,12 @@ ui <- fluidPage(
         tabPanel("MCMC")
       ),
       mainPanel(
+        hr(),
         h1("beautier command"),
         "Use this in your R scripts:",
         verbatimTextOutput("result"),
         h1("Produced XML"),
+        "Just for your interest :-)",
         verbatimTextOutput("xml"),
         width = 12
       )
