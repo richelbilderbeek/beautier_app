@@ -21,7 +21,10 @@ ui <- fluidPage(
         tabPanel("Clock Model",
           selectInput("clock_model", "Clock model", choices = c("Strict Clock", "Relaxed Clock Log Normal"))
         ),
-        tabPanel("Priors"),
+        tabPanel("Priors",
+          selectInput("tree_prior", "Tree prior", choices = c("Yule Model", "Birth Death Model"))
+          
+        ),
         tabPanel("MCMC")
       ),
       mainPanel(
@@ -55,10 +58,19 @@ create_site_model_text <- function(subst_model) {
 
 create_clock_model_text <- function(clock_model) {
   if (clock_model == "Strict Clock") {
-    return ("create_strict_clock_model()")
+    return("create_strict_clock_model()")
   }
   if (clock_model == "Relaxed Clock Log Normal") {
-    return ("create_rln_clock_model()")
+    return("create_rln_clock_model()")
+  }
+}
+
+create_tree_prior_text <- function(tree_prior) {
+  if (tree_prior == "Yule Model") {
+    return("create_yule_tree_prior()")
+  }
+  if (tree_prior == "Birth Death Model") {
+    return("create_bd_tree_prior()")
   }
 }
 
@@ -67,7 +79,8 @@ create_beautier_cmd <- function(input) {
     "create_beast2_input(",
     paste0("  input_filenames = \"", input$filename, "\","),
     paste0("  site_models = ", create_site_model_text(input$subst_model), ","),
-    paste0("  clock_models = ", create_clock_model_text(input$clock_model)),
+    paste0("  clock_models = ", create_clock_model_text(input$clock_model), ","),
+    paste0("  tree_priors = ", create_tree_prior_text(input$tree_prior)),
     ")",
     sep = "\n", collapse = "\n"
   )  
