@@ -11,7 +11,9 @@ ui <- fluidPage(
           title = "Partitions",
           textInput("filename", "Filename", value = beautier::get_beautier_path("anthus_aco_sub.fas"), width = "100%")
         ),
-        tabPanel("Tip Dates"),
+        tabPanel("Tip Dates",
+          "No input editors"
+        ),
         tabPanel("Site Model",
           numericInput("subst_rate", "Substitution rate", value = 1.0, min = 0.0, max = 1.0),
           numericInput("gamma_cat_count", "Gamma category count", value = 0, min = 0, step = 1),
@@ -25,7 +27,12 @@ ui <- fluidPage(
           selectInput("tree_prior", "Tree prior", choices = c("Yule Model", "Birth Death Model"))
           
         ),
-        tabPanel("MCMC")
+        tabPanel("MCMC",
+          numericInput("chain_length", "Chain Length", value = 10000000, min = 0, step = 1),
+          numericInput("store_every", "Store Every", value = -1, min = -1, step = 1),
+          numericInput("pre_burnin", "Pre Burnin", value = 0, min = 0, max = 0),
+          numericInput("num_init", "Num Initialization Atte...", value = 10, min = 10, max = 10)
+        )
       ),
       mainPanel(
         hr(),
@@ -74,13 +81,24 @@ create_tree_prior_text <- function(tree_prior) {
   }
 }
 
+create_mcmc_text <- function(input) {
+  paste(
+    "  mcmc = create_mcmc(",
+    paste0("    chain_length = ", input$chain_length, ","),
+    paste0("    store_every = ", input$store_every),
+    "  )",
+    sep = "\n"
+  )
+}
+
 create_beautier_cmd <- function(input) {
   paste(
     "create_beast2_input(",
     paste0("  input_filenames = \"", input$filename, "\","),
     paste0("  site_models = ", create_site_model_text(input$subst_model), ","),
     paste0("  clock_models = ", create_clock_model_text(input$clock_model), ","),
-    paste0("  tree_priors = ", create_tree_prior_text(input$tree_prior)),
+    paste0("  tree_priors = ", create_tree_prior_text(input$tree_prior), ","),
+    create_mcmc_text(input),
     ")",
     sep = "\n", collapse = "\n"
   )  
