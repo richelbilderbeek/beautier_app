@@ -9,7 +9,7 @@ ui <- fluidPage(
         title = "beautier",
         tabPanel(
           title = "Partitions",
-          textInput("filename", h3("Filename"), value = "anthus_aco.fas")
+          textInput("filename", h3("Filename"), value = beautier::get_beautier_path("anthus_aco_sub.fas"))
         ),
         tabPanel("Tip Dates"),
         tabPanel("Site Model"),
@@ -18,7 +18,8 @@ ui <- fluidPage(
         tabPanel("MCMC")
       ),
       mainPanel(
-        textOutput("result")
+        verbatimTextOutput("result"),
+        verbatimTextOutput("xml")
       )
     )
   )
@@ -28,7 +29,17 @@ ui <- fluidPage(
 server <- function(input, output) {
    
   output$result <- renderText({ 
-    paste("Filename:", input$filename)
+    paste(
+      "library(beautier)",
+      "create_beast2_input(",
+      paste0("  input_filenames = \"", input$filename, "\""),
+      ")",
+      sep = "\n", collapse = "\n"
+    )
+  })
+
+  output$xml <- renderText({
+    paste(create_beast2_input(input$filename), collapse = "\n")
   })
    
 }
